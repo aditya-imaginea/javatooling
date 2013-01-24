@@ -32,4 +32,11 @@ public class DiffService {
 		return diff;
 
 	}
+	@GET
+	@Path("differences")
+	@Produces("application/json")
+	@BadgerFish
+	public CompareResponse showDifferences(@QueryParam("d") CompareResponse cr){
+		return cr;
+	}
 }

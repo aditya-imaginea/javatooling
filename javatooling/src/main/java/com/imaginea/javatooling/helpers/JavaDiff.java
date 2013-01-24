@@ -13,6 +13,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import com.imaginea.javatooling.entity.CompareResponse;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.tree.MethodTree;
@@ -70,15 +71,19 @@ public class JavaDiff {
 
 	}
 
-	public String compare() throws Exception {
+	public CompareResponse compare() throws Exception {
+		CompareResponse cr = new CompareResponse();
+		List<String> methodsAdded = new ArrayList<String>();
+		List<String> methodsDeleted = new ArrayList<String>();
 		StringBuffer buf = new StringBuffer();
-		
+
 		gatherInfo();
 		buf.append("--------------deletions from version1-----------\n");
 		System.out.println("--------------deletions from version1-----------");
 		for (String s : ver1.keySet()) {
 			if (!ver2.containsKey(s)) {
-				buf.append(s+"\n");
+				methodsDeleted.add(s);
+				buf.append(s + "\n");
 				System.out.println(s);
 			}
 		}
@@ -86,7 +91,8 @@ public class JavaDiff {
 		System.out.println("--------------additions in version2------------");
 		for (String s : ver2.keySet()) {
 			if (!ver1.containsKey(s)) {
-				buf.append(s+"\n");
+				methodsAdded.add(s);
+				buf.append(s + "\n");
 				System.out.println(s);
 			}
 		}
@@ -107,10 +113,9 @@ public class JavaDiff {
 						}
 					}
 					for (int j = s1.size(); j < s2.size(); j++) {
-						System.out.println(">> "+s2.get(j));
+						System.out.println(">> " + s2.get(j));
 					}
-				}
-				else{
+				} else {
 					for (int i = 0; i < s2.size(); i++) {
 						if (!s1.get(i).toString().equals(s2.get(i).toString())) {
 							System.out.println("<< " + s1.get(i));
@@ -118,12 +123,14 @@ public class JavaDiff {
 						}
 					}
 					for (int j = s2.size(); j < s1.size(); j++) {
-						System.out.println("<< "+s1.get(j));
+						System.out.println("<< " + s1.get(j));
 					}
 				}
 			}
 		}
-		return buf.toString();
+		cr.setMethodsAdded(methodsAdded);
+		cr.setMethodsDeleted(methodsDeleted);
+		return cr;
 	}
 
 	private static class MethodScanner extends TreeScanner<Void, Void> {
