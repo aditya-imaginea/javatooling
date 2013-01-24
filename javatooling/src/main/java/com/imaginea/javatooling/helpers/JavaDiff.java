@@ -46,9 +46,11 @@ public class JavaDiff {
 
 	private void gatherInfo() throws IOException {
 		boolean firstFile = true;
+
 		CompilationTask task = compiler.getTask(null, fileManager,
 				diagnosticsCollector, null, null, fileObjects);
-		JavacTask javacTask = (JavacTask) task;
+		com.sun.tools.javac.api.JavacTaskImpl javacTask = (com.sun.tools.javac.api.JavacTaskImpl) task;
+		// JavacTask javacTask = (JavacTask) task;
 		SourcePositions sourcePositions = Trees.instance(javacTask)
 				.getSourcePositions();
 		parseResult = javacTask.parse();

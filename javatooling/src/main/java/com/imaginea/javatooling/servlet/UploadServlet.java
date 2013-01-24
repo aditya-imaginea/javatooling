@@ -84,7 +84,7 @@ public class UploadServlet extends HttpServlet {
 			// request.setAttribute("response", diff.compare());
 			response.sendRedirect("http://" + request.getServerName() + ":"
 					+ request.getServerPort() + "/" + request.getContextPath()
-					+ "/diffservice/differences?d=" + diff.compare());
+					+ "/rest/diffservice/differences?d=" + diff.compare());
 		} catch (Exception ex) {
 			request.setAttribute("message",
 					"There was an error: " + ex.getMessage());
