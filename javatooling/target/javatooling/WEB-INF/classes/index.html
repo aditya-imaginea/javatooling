@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<title>File Upload</title>
+	</head>
+	<body>
+		<form method="post" action="UploadServlet"
+		enctype="multipart/form-data">
+			Select file base version:
+			<input type="file" name="file1"
+			id="fileChooser1" />
+			<br />
+			Select file new version:
+			<input type="file" name="file2"
+			id="fileChooser2" />
+			<br />
+			<input type="submit" value="Upload" />
+		</form>
+	</body>
+</html>
