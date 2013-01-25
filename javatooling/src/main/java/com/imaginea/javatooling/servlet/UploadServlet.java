@@ -2,6 +2,9 @@ package com.imaginea.javatooling.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -53,13 +56,14 @@ public class UploadServlet extends HttpServlet {
 		// constructs the directory path to store upload file
 		String uploadPath = getServletContext().getRealPath("")
 				+ File.separator + UPLOAD_DIRECTORY;
-
+		String relativePath = getServletContext().getContextPath()
+				+ File.separator + UPLOAD_DIRECTORY;
 		// creates the directory if it does not exist
 		File uploadDir = new File(uploadPath);
 		if (!uploadDir.exists()) {
 			uploadDir.mkdir();
 		}
-		JavaDiff diff = null;
+		// JavaDiff diff = null;
 		try {
 			// parses the request's content to extract file data
 			List formItems = upload.parseRequest(request);
@@ -72,6 +76,7 @@ public class UploadServlet extends HttpServlet {
 				if (!item.isFormField()) {
 					String fileName = new File(item.getName()).getName();
 					String filePath = uploadPath + File.separator + fileName;
+					String fileparm = relativePath + File.separator + fileName;
 					System.out.println(filePath);
 					filePaths.add(filePath);
 					File storeFile = new File(filePath);
@@ -79,17 +84,19 @@ public class UploadServlet extends HttpServlet {
 					item.write(storeFile);
 				}
 			}
-			diff = new JavaDiff(filePaths.get(0), filePaths.get(1));
-			// diff.compare();
-			// request.setAttribute("response", diff.compare());
-			response.sendRedirect("http://" + request.getServerName() + ":"
-					+ request.getServerPort() + "/" + request.getContextPath()
-					+ "/rest/diffservice/differences?d=" + diff.compare());
+			String url = "http://" + request.getServerName() + ":"
+					+ request.getServerPort() + request.getContextPath()
+					+ "/rest/diffservice/compare?" + "old=" + filePaths.get(0)
+					+ "&new=" + filePaths.get(1);
+			System.out.println(url);
+			response.sendRedirect(url);
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			request.setAttribute("message",
 					"There was an error: " + ex.getMessage());
+			getServletContext().getRequestDispatcher("/message.jsp").forward(
+					request, response);
 		}
-		getServletContext().getRequestDispatcher("/message.jsp").forward(
-				request, response);
+
 	}
 }

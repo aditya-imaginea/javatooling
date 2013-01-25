@@ -11,6 +11,7 @@ import javax.ws.rs.QueryParam;
 import org.jboss.resteasy.annotations.providers.jaxb.json.BadgerFish;
 
 import com.imaginea.javatooling.entity.CompareResponse;
+import com.imaginea.javatooling.helpers.JavaDiff;
 
 @Path("/diffservice")
 public class DiffService {
@@ -32,11 +33,19 @@ public class DiffService {
 		return diff;
 
 	}
+
 	@GET
-	@Path("differences")
+	@Path("compare")
 	@Produces("application/json")
 	@BadgerFish
-	public CompareResponse showDifferences(@QueryParam("d") CompareResponse cr){
+	public CompareResponse showDifferences(@QueryParam("old") String oldFile,
+			@QueryParam("new") String newFile) {
+		CompareResponse cr = null;
+		try {
+			cr = (new JavaDiff(oldFile, newFile)).compare();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		return cr;
 	}
 }

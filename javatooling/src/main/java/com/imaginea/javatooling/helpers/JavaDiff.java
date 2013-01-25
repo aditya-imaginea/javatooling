@@ -1,6 +1,8 @@
 package com.imaginea.javatooling.helpers;
 
-import java.io.IOException;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,31 +46,37 @@ public class JavaDiff {
 		fileObjects = fileManager.getJavaFileObjects(file1Path, file2Path);
 	}
 
-	private void gatherInfo() throws IOException {
-		boolean firstFile = true;
+	private void gatherInfo() {
+		try {
+			//dumpDebugInfo();
+			boolean firstFile = true;
 
-		CompilationTask task = compiler.getTask(null, fileManager,
-				diagnosticsCollector, null, null, fileObjects);
-		com.sun.tools.javac.api.JavacTaskImpl javacTask = (com.sun.tools.javac.api.JavacTaskImpl) task;
-		// JavacTask javacTask = (JavacTask) task;
-		SourcePositions sourcePositions = Trees.instance(javacTask)
-				.getSourcePositions();
-		parseResult = javacTask.parse();
-		for (CompilationUnitTree compilationUnitTree : parseResult) {
-			MethodScanner ms = new MethodScanner(compilationUnitTree,
-					sourcePositions);
-			compilationUnitTree.accept(ms, null);
-			// adding methods versions
-			if (firstFile) {
-				for (MethodTree m : ms.getMethods()) {
-					ver1.put(m.getName().toString(), m);
-				}
-				firstFile = false;
-			} else {
-				for (MethodTree m : ms.getMethods()) {
-					ver2.put(m.getName().toString(), m);
+			CompilationTask task = compiler.getTask(null, fileManager,
+					diagnosticsCollector, null, null, fileObjects);
+			JavacTask javacTask = (JavacTask) task;
+			// JavacTask javacTask = (JavacTask) task;
+			SourcePositions sourcePositions = Trees.instance(javacTask)
+					.getSourcePositions();
+			parseResult = javacTask.parse();
+			for (CompilationUnitTree compilationUnitTree : parseResult) {
+				MethodScanner ms = new MethodScanner(compilationUnitTree,
+						sourcePositions);
+				compilationUnitTree.accept(ms, null);
+				// adding methods versions
+				if (firstFile) {
+					for (MethodTree m : ms.getMethods()) {
+						ver1.put(m.getName().toString(), m);
+					}
+					firstFile = false;
+				} else {
+					for (MethodTree m : ms.getMethods()) {
+						ver2.put(m.getName().toString(), m);
+					}
 				}
 			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -165,6 +173,20 @@ public class JavaDiff {
 
 		public List<MethodTree> getMethods() {
 			return methods;
+		}
+	}
+
+	private void dumpDebugInfo() {
+
+		try {
+			Class cls = Class.forName("com.sun.source.util.JavacTask");
+			ProtectionDomain pd = cls.getProtectionDomain();
+			CodeSource cs = pd.getCodeSource();
+			URL url = cs.getLocation();
+			System.out.println(url.getFile());
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 }
