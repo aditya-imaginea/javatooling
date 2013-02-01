@@ -125,7 +125,7 @@ public class UploadServlet extends HttpServlet {
 	private void loadJar() {
 		try {
 			System.out.println("Dirty Hack: loading the tools.jar physically ");
-			ClasspathHacker.addFile("/usr/lib/jvm/java-7-oracle/lib/tools.jar");
+			ClasspathHacker.addFile("tools.jar");
 		} catch (IOException e) {
 
 			e.printStackTrace();
