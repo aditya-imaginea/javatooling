@@ -55,6 +55,7 @@ public class JavaDiff {
 			SourcePositions sourcePositions = Trees.instance(javacTask)
 					.getSourcePositions();
 			parseResult = javacTask.parse();
+			
 			for (CompilationUnitTree compilationUnitTree : parseResult) {
 				MethodScanner ms = new MethodScanner(compilationUnitTree,
 						sourcePositions);

@@ -33,34 +33,22 @@
 			<!-- The Servlet API is provided by Tomcat -->
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.sun</groupId>
+			<artifactId>tools</artifactId>
+			<version>1.7.0</version>
+		</dependency>
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>tools-1.7.jar</id>
-			<activation>
-				<property>
-					<name>java.vendor</name>
-					<value>Oracle Corporation</value>
-				</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>com.sun</groupId>
-					<artifactId>tools</artifactId>
-					<version>1.7.0</version>
-					<scope>system</scope>
-					<systemPath>/usr/lib/jvm/java-7-oracle/jdk1.7.0_09/lib/tools.jar</systemPath>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 	<repositories>
 		<repository>
 			<id>jboss</id>
 			<url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
 		</repository>
+		<repository>
+			<id>my-repo</id>
+			<url>file://${basedir}/lib/repo/</url>
+		</repository>
 	</repositories>
-
 	<build>
 		<finalName>javatooling</finalName>
 		<plugins>
