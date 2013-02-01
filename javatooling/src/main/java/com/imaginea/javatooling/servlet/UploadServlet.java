@@ -19,6 +19,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.imaginea.javatooling.helpers.ClasspathHacker;
 import com.imaginea.javatooling.helpers.JavaDiff;
 
 /**
@@ -31,6 +32,15 @@ public class UploadServlet extends HttpServlet {
 	private static final int THRESHOLD_SIZE = 1024 * 1024 * 3; // 3MB
 	private static final int MAX_FILE_SIZE = 1024 * 1024 * 40; // 40MB
 	private static final int REQUEST_SIZE = 1024 * 1024 * 50; // 50MB
+
+	@Override
+	public void init() throws ServletException {
+		// TODO Auto-generated method stub
+		super.init();
+		if (!checkClassLoaded("com.sun.source.tree.TreeVisitor")) {
+			loadJar();
+		}
+	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -54,10 +64,9 @@ public class UploadServlet extends HttpServlet {
 		upload.setSizeMax(REQUEST_SIZE);
 
 		// constructs the directory path to store upload file
-		String uploadPath = getServletContext().getRealPath("")
-				+ File.separator + UPLOAD_DIRECTORY;
-		String relativePath = getServletContext().getContextPath()
-				+ File.separator + UPLOAD_DIRECTORY;
+		// String uploadPath = getServletContext().getRealPath("")
+		// + File.separator + UPLOAD_DIRECTORY;
+		String uploadPath = "/tmp/upload";
 		// creates the directory if it does not exist
 		File uploadDir = new File(uploadPath);
 		if (!uploadDir.exists()) {
@@ -76,7 +85,6 @@ public class UploadServlet extends HttpServlet {
 				if (!item.isFormField()) {
 					String fileName = new File(item.getName()).getName();
 					String filePath = uploadPath + File.separator + fileName;
-					String fileparm = relativePath + File.separator + fileName;
 					System.out.println(filePath);
 					filePaths.add(filePath);
 					File storeFile = new File(filePath);
@@ -98,5 +106,29 @@ public class UploadServlet extends HttpServlet {
 					request, response);
 		}
 
+	}
+
+	private boolean checkClassLoaded(String className) {
+		try {
+			Class cls = Class.forName(className);
+			System.out.println("\n" + cls.getName() + " loaded from:"
+					+ cls.getProtectionDomain().getCodeSource().getLocation());
+			return true;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	// is a real dirty hack .. but classloader delegation seems to be eating
+	// away tools.jar
+	private void loadJar() {
+		try {
+			System.out.println("Dirty Hack: loading the tools.jar physically ");
+			ClasspathHacker.addFile("/usr/lib/jvm/java-7-oracle/lib/tools.jar");
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
 	}
 }

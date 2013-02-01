@@ -1,8 +1,5 @@
 package com.imaginea.javatooling.helpers;
 
-import java.net.URL;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,13 +45,13 @@ public class JavaDiff {
 
 	private void gatherInfo() {
 		try {
-			//dumpDebugInfo();
 			boolean firstFile = true;
 
 			CompilationTask task = compiler.getTask(null, fileManager,
 					diagnosticsCollector, null, null, fileObjects);
+
 			JavacTask javacTask = (JavacTask) task;
-			// JavacTask javacTask = (JavacTask) task;
+
 			SourcePositions sourcePositions = Trees.instance(javacTask)
 					.getSourcePositions();
 			parseResult = javacTask.parse();
@@ -176,17 +173,17 @@ public class JavaDiff {
 		}
 	}
 
-	private void dumpDebugInfo() {
-
-		try {
-			Class cls = Class.forName("com.sun.source.util.JavacTask");
-			ProtectionDomain pd = cls.getProtectionDomain();
-			CodeSource cs = pd.getCodeSource();
-			URL url = cs.getLocation();
-			System.out.println(url.getFile());
-
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+	/*
+	 * private void dumpDebugInfo() {
+	 * 
+	 * try { Class cls = Class.forName("com.sun.source.util.JavacTask");
+	 * System.out.println("\n" + cls.getName() + " loaded from:" +
+	 * cls.getProtectionDomain().getCodeSource().getLocation());
+	 * 
+	 * cls = Class.forName("javax.tools.JavaCompiler.CompilationTask");
+	 * System.out.println("\n" + cls.getName() + " loaded from:" +
+	 * cls.getProtectionDomain().getCodeSource().getLocation());
+	 * 
+	 * } catch (Exception ex) { ex.printStackTrace(); } }
+	 */
 }
